@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Kartičky Dřevin - Komplet</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f0f4f0; margin: 0; padding: 20px; min-height: 100vh; }
+        h1 { color: #2d5a27; margin-bottom: 5px; }
+        .counter { color: #666; margin-bottom: 20px; font-weight: bold; background: white; padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card-container { width: 350px; height: 500px; perspective: 1000px; margin-bottom: 30px; }
+        .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; border: 4px solid #2d5a27; box-shadow: 0 10px 25px rgba(0,0,0,0.15); padding: 20px; box-sizing: border-box; }
+        .img-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fafafa; border-radius: 10px; }
+        img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .card-back { transform: rotateY(180deg); background-color: #e8f5e9; text-align: center; }
+        .cz-name { font-size: 1.8rem; font-weight: bold; color: #1b3d17; margin-bottom: 15px; }
+        .lat-name { font-size: 1.4rem; font-style: italic; color: #555; border-top: 1px solid #c8d8c8; padding-top: 15px; }
+        button { padding: 15px 45px; font-size: 1.1rem; background-color: #2d5a27; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.2s; font-weight: bold; }
+        button:hover { background-color: #1e3d1a; transform: translateY(-2px); }
+        .hint { margin-top: 15px; color: #888; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <h1>🌿 Poznávačka dřevin</h1>
+    <div class="counter" id="stat">Nahráno dřevin: 0</div>
+
+    <div class="card-container">
+        <div class="card" id="mainCard" onclick="this.classList.toggle('is-flipped')">
+            <div class="card-face card-front">
+                <div class="img-container">
+                    <img id="plantImg" src="" alt="Obrázek se nenačetl">
+                </div>
+            </div>
+            <div class="card-face card-back">
+                <div class="cz-name" id="czName">---</div>
+                <div class="lat-name" id="latName">---</div>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="pickRandom()">Další náhodná karta</button>
+    <p class="hint">Klikni na kartu pro otočení</p>
+
+    <script>
+        const drevinData = [
+            { cz: "Jinan dvoulaločný", lat: "Ginkgo biloba", img: "jinan-dvoulalocny.jpg" },
+            { cz: "Borovice lesní", lat: "Pinus sylvestris", img: "borovice-lesni.jpg" },
+            { cz: "Borovice kleč", lat: "Pinus mugo", img: "borovice-klec.jpg" },
+            { cz: "Borovice vejmutovka", lat: "Pinus strobus", img: "borovice-vejmutovka.jpg" },
+            { cz: "Borovice černá", lat: "Pinus nigra", img: "borovice-cerna.jpg" },
+            { cz: "Modřín opadavý", lat: "Larix decidua", img: "modrin-opadavy.jpg" },
+            { cz: "Jedle bělokorá", lat: "Abies alba", img: "jedle-belokora.jpg" },
+            { cz: "Smrk ztepilý", lat: "Picea abies", img: "smrk-ztepily.jpg" },
+            { cz: "Smrk pichlavý", lat: "Picea pungens", img: "smrk-pichlavy.jpg" },
+            { cz: "Douglaska tisolistá", lat: "Pseudotsuga menziesii", img: "douglaska-tisolista.jpg" },
+            { cz: "Tis červený", lat: "Taxus baccata", img: "tis-cerveny.jpg" },
+            { cz: "Jalovec obecný", lat: "Juniperus communis", img: "jalovec-obecny.jpg" },
+            { cz: "Platan západní", lat: "Platanus occidentalis", img: "platan-zapadni.jpg" },
+            { cz: "Dřišťál obecný", lat: "Berberis vulgaris", img: "dristal-obecny.jpg" },
+            { cz: "Chmel otáčivý", lat: "Humulus lupulus", img: "chmel-otacivy.jpg" },
+            { cz: "Jilm habrolistý", lat: "Ulmus minor", img: "jilm-habrolisty.jpg" },
+            { cz: "Jilm horský", lat: "Ulmus glabra", img: "jilm-horsky.jpg" },
+            { cz: "Jilm vaz", lat: "Ulmus laevis", img: "jilm-vaz.jpg" },
+            { cz: "Buk lesní", lat: "Fagus sylvatica", img: "buk-lesni.jpg" },
+            { cz: "Dub cer", lat: "Quercus cerris", img: "dub-cer.png" },
+            { cz: "Dub červený", lat: "Quercus rubra", img: "dub-cerveny.jpg" },
+            { cz: "Dub letní", lat: "Quercus robur", img: "dub-letni.jpg" },
+            { cz: "Dub zimní", lat: "Quercus petraea", img: "dub-zimni.jpg" },
+            { cz: "Ořešák královský", lat: "Juglans regia", img: "oresak-kralovsky.jpg" },
+            { cz: "Bříza bělokorá", lat: "Betula pendula", img: "briza-belokora.jpg" },
+            { cz: "Bříza pýřitá", lat: "Betula pubescens", img: "briza-pyrita.jpg" },
+            { cz: "Olše lepkavá", lat: "Alnus glutinosa", img: "olse-lepkava.jpg" },
+            { cz: "Olše šedá", lat: "Alnus incana", img: "olse-seda.jpg" },
+            { cz: "Olše zelená", lat: "Alnus alnobetula", img: "olse-zelena.jpg" },
+            { cz: "Habr obecný", lat: "Carpinus betulus", img: "habr-obecny.jpg" },
+            { cz: "Líska obecná", lat: "Corylus avellana", img: "liska-obecna.jpg" },
+            { cz: "Líska turecká", lat: "Corylus colurna", img: "liska-turecka.jpeg" },
+            { cz: "Topol osika", lat: "Populus tremula", img: "topol-osika.jpg" },
+            { cz: "Topol černý", lat: "Populus nigra", img: "topol-cerny.jpg" },
+            { cz: "Vrba pětimužná", lat: "Salix pentandra", img: "vrba-petimuzna.png" },
+            { cz: "Vrba křehká", lat: "Salix euxina", img: "vrba-krehka.jpg" },
+            { cz: "Vrba bílá", lat: "Salix alba", img: "vrba-bila.jpg" },
+            { cz: "Vrba trojmužná", lat: "Salix triandra", img: "vrba-trojmuzna.jpg" },
+            { cz: "Vrba nachová", lat: "Salix purpurea", img: "vrba-nachova.jpg" },
+            { cz: "Vrba šedá", lat: "Salix elaeagnos", img: "vrba-seda.jpg" },
+            { cz: "Vrba košíkářská", lat: "Salix viminalis", img: "vrba-kosikarska.jpg" },
+            { cz: "Vrba jíva", lat: "Salix caprea", img: "vrba-jiva.jpg" },
+            { cz: "Vrba ušatá", lat: "Salix aurita", img: "vrba-usata.jpg" },
+            { cz: "Vrba popelavá", lat: "Salix cinerea", img: "vrba-popelava.jpg" },
+            { cz: "Vrba bylinná", lat: "Salix herbacea", img: "vrba-bylinna.jpg" },
+            { cz: "Plamének plotní", lat: "Clematis vitalba", img: "plamenek-plotni.jpg" },
+            { cz: "Ostružiník maliník", lat: "Rubus idaeus", img: "ostruzinik-malinik.jpg" },
+            { cz: "Ostružiník sivý (ježiník)", lat: "Rubus caesius", img: "ostruzinik-sivy.jpg" },
+            { cz: "Ostružiník křovitý", lat: "Rubus fruticosus", img: "ostruzinik-krovity.jpg" },
+            { cz: "Růže šípková", lat: "Rosa canina", img: "ruze-sipkova.jpg" },
+            { cz: "Střemcha obecná", lat: "Prunus padus", img: "stremcha-obecna.jpg" },
+            { cz: "Třešeň ptačí", lat: "Prunus avium", img: "tresen-ptaci.jpg" },
+            { cz: "Trnka obecná", lat: "Prunus spinosa", img: "trnka-obecna.jpg" },
+            { cz: "Skalník obecný", lat: "Cotoneaster integerrimus", img: "skalnik-obecny.jpg" },
+            { cz: "Hrušeň obecná", lat: "Pyrus communis", img: "hrusen-obecna.jpg" },
+            { cz: "Jeřáb ptačí", lat: "Sorbus aucuparia", img: "jerab-ptaci.jpg" },
+            { cz: "Břek obecný", lat: "Sorbus torminalis", img: "brek-obecny.jpg" },
+            { cz: "Muk obecný", lat: "Sorbus aria", img: "muk-obecny.jpg" },
+            { cz: "Jabloň lesní", lat: "Malus sylvestris", img: "jablon-lesni.jpg" },
+            { cz: "Hloh obecný", lat: "Crataegus laevigata", img: "hloh-obecny.jpg" },
+            { cz: "Hloh jednoblizný", lat: "Crataegus monogyna", img: "hloh-jednoblizny.jpg" },
+            { cz: "Janovec metlatý", lat: "Cytisus scoparius", img: "janovec-metlaty.jpg" },
+            { cz: "Kručinka barvířská", lat: "Genista tinctoria", img: "krucinka-barvirska.jpg" },
+            { cz: "Trnovník akát", lat: "Robinia pseudoacacia", img: "trnovnik-akat.jpg" },
+            { cz: "Netvařec křovitý", lat: "Amorpha fruticosa", img: "netvarec-krovity.jpg" },
+            { cz: "Židoviník německý", lat: "Myricaria germanica", img: "zidovinik-nemecky.jpg" },
+            { cz: "Vřes obecný", lat: "Calluna vulgaris", img: "vres-obecny.jpg" },
+            { cz: "Rojovník bahenní", lat: "Ledum palustre", img: "rojovnik-bahenni.jpg" },
+            { cz: "Brusinka obecná", lat: "Rhodococcus vitis-idaea", img: "brusinka-obecna.jpg" },
+            { cz: "Borůvka černá", lat: "Vaccinium myrtillus", img: "boruvka-cerna.jpg" }
+        ];
+
+        document.getElementById('stat').innerText = `Nahráno dřevin: ${drevinData.length}`;
+        let lastIndex = -1;
+
+        function pickRandom() {
+            const card = document.getElementById('mainCard');
+            card.classList.remove('is-flipped');
+            setTimeout(() => {
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * drevinData.length);
+                } while (randomIndex === lastIndex && drevinData.length > 1);
+                lastIndex = randomIndex;
+                const selected = drevinData[randomIndex];
+                document.getElementById('plantImg').src = selected.img;
+                document.getElementById('czName').innerText = selected.cz;
+                document.getElementById('latName').innerText = selected.lat;
+            }, 200);
+        }
+        window.onload = pickRandom;
+    </script>
+</body>
+</html>
