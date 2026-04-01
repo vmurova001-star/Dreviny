@@ -1,39 +1,105 @@
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 Poznávačka Dřevin</title>
+    <title>🌿 Poznávačka Dřevin - Vyladěná</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f0f4f0; margin: 0; padding: 10px; min-height: 100vh; user-select: none; }
-        h1 { color: #2d5a27; font-size: 1.5rem; margin: 10px 0; }
-        .counter { color: #666; margin-bottom: 15px; font-weight: bold; background: white; padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        :root {
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --blue: #3498db;
+            --dark-green: #2d5a27;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f4f7f6; margin: 0; padding: 10px; min-height: 100vh; user-select: none; }
         
-        .card-container { width: 90vw; max-width: 350px; height: 70vh; max-height: 500px; perspective: 1000px; margin-bottom: 20px; }
-        .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        #menu-screen { position: fixed; inset: 0; background: #f4f7f6; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; overflow-y: auto; }
+        .menu-title { color: var(--dark-green); margin-bottom: 15px; font-size: 2rem; }
+        .menu-section { margin-bottom: 20px; width: 100%; max-width: 320px; }
+        .menu-section p { font-weight: bold; margin-bottom: 10px; color: #555; }
+        
+        .mode-toggle { display: flex; gap: 5px; background: #ddd; padding: 5px; border-radius: 12px; margin-bottom: 20px; }
+        .btn-mode { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: transparent; transition: 0.3s; }
+        .btn-mode.active { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--dark-green); }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 320px; }
+        .btn-menu { padding: 12px; border-radius: 12px; border: 2px solid var(--dark-green); background: white; color: var(--dark-green); font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .btn-menu:hover { background: var(--dark-green); color: white; }
+        .full-width { grid-column: span 2; }
+        
+        input[type="number"] { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ccc; text-align: center; font-size: 1.1rem; margin-bottom: 10px; box-sizing: border-box; }
+
+        .header-stats { display: flex; gap: 8px; margin-bottom: 10px; font-weight: bold; }
+        .stat-box { padding: 6px 12px; border-radius: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.9rem; min-width: 50px; text-align: center; }
+        .stat-wrong { color: var(--red); border: 2px solid var(--red); }
+        .stat-correct { color: var(--green); border: 2px solid var(--green); }
+        .stat-current { color: var(--blue); border: 2px solid var(--blue); }
+
+        .card-container { width: 320px; height: 450px; perspective: 1000px; margin-bottom: 20px; }
+        .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s; cursor: pointer; }
         .card.is-flipped { transform: rotateY(180deg); }
         
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; border: 4px solid #2d5a27; box-shadow: 0 10px 25px rgba(0,0,0,0.15); padding: 15px; box-sizing: border-box; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; border: 4px solid var(--dark-green); box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 15px; box-sizing: border-box; }
         .img-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px; }
+        img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
         .card-back { transform: rotateY(180deg); background-color: #e8f5e9; text-align: center; }
-        .cz-name { font-size: 1.8rem; font-weight: bold; color: #1b3d17; margin-bottom: 15px; }
-        .lat-name { font-size: 1.4rem; font-style: italic; color: #555; border-top: 1px solid #c8d8c8; padding-top: 15px; width: 80%; }
-        
-        .hint { color: #888; font-size: 0.9rem; text-align: center; padding: 0 20px; }
+        .cz-name { font-size: 1.6rem; font-weight: bold; color: #1b3d17; margin-bottom: 10px; }
+        .lat-name { font-size: 1.2rem; font-style: italic; color: #555; border-top: 1px solid #ccc; padding-top: 10px; width: 85%; }
+
+        .controls { display: flex; align-items: center; gap: 15px; }
+        .btn-circle { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--blue); background: white; color: var(--blue); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-pill { padding: 10px 25px; border-radius: 30px; background: white; font-size: 20px; cursor: pointer; border: 2px solid #ddd; min-width: 70px; }
+        .btn-wrong { color: var(--red); border-color: var(--red); }
+        .btn-correct { color: var(--green); border-color: var(--green); }
+
+        #results-screen { display: none; position: fixed; inset: 0; background: white; flex-direction: column; align-items: center; justify-content: center; z-index: 100; text-align: center; padding: 20px; }
+        .result-row { display: flex; justify-content: space-between; width: 250px; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <h1>🌿 Poznávačka dřevin</h1>
-    <div class="counter" id="stat">Načítání...</div>
+    <div id="menu-screen">
+        <h1 class="menu-title">🌿 Poznávačka Dřevin</h1>
+        
+        <div class="menu-section">
+            <p>Pořadí dřevin:</p>
+            <div class="mode-toggle">
+                <button id="mode-linear" class="btn-mode active" onclick="setMode('linear')">Popořadě</button>
+                <button id="mode-random" class="btn-mode" onclick="setMode('random')">Náhodně</button>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <p>Zvolit počet otázek:</p>
+            <div class="menu-grid">
+                <button class="btn-menu" onclick="startQuiz(10)">10</button>
+                <button class="btn-menu" onclick="startQuiz(25)">25</button>
+                <button class="btn-menu" onclick="startQuiz(50)">50</button>
+                <button class="btn-menu" onclick="startQuiz(75)">75</button>
+                <button class="btn-menu full-width" onclick="startQuiz(100)">Vše (100)</button>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <input type="number" id="customAmount" placeholder="Vlastní počet..." value="70">
+            <button class="btn-menu full-width" onclick="startQuiz(document.getElementById('customAmount').value)">Spustit výběr</button>
+        </div>
+    </div>
+
+    <div class="header-stats">
+        <div class="stat-box stat-current" id="counter">1 / --</div>
+        <div class="stat-box stat-wrong" id="wrong-count">✕ 0</div>
+        <div class="stat-box stat-correct" id="correct-count">0 ✓</div>
+    </div>
 
     <div class="card-container">
-        <div class="card" id="mainCard" onclick="handleCardClick()">
+        <div class="card" id="mainCard" onclick="this.classList.toggle('is-flipped')">
             <div class="card-face card-front">
                 <div class="img-container">
-                    <img id="plantImg" src="" alt="Obrázek se nenačetl">
+                    <img id="plantImg" src="" alt="Obrázek chybí">
                 </div>
             </div>
             <div class="card-face card-back">
@@ -43,10 +109,25 @@
         </div>
     </div>
 
-    <p class="hint">Ťukni pro název, ťukni znovu pro další dřevinu</p>
+    <div class="controls">
+        <button class="btn-circle" onclick="prevCard()">←</button>
+        <button class="btn-pill btn-wrong" onclick="markAnswer(false)">✕</button>
+        <button class="btn-pill btn-correct" onclick="markAnswer(true)">✓</button>
+        <button class="btn-circle" onclick="nextCard()">→</button>
+    </div>
+
+    <div id="results-screen">
+        <h1>🏆 Výsledek testu</h1>
+        <div class="result-row"><span>Věděla:</span> <span id="res-correct" style="color:var(--green)">0</span></div>
+        <div class="result-row"><span>Nevěděla:</span> <span id="res-wrong" style="color:var(--red)">0</span></div>
+        <div class="result-row"><span>Úspěšnost:</span> <span id="res-pct" style="font-weight:bold">0%</span></div>
+        <br>
+        <button id="btn-errors" class="btn-menu" onclick="retryErrors()" style="display:none; background: var(--red); color: white; border: none; margin-bottom: 10px;">Procvičit jen chyby</button>
+        <button class="btn-menu" onclick="location.reload()" style="background:var(--dark-green); color:white; border:none;">Zpět do menu</button>
+    </div>
 
     <script>
-        const drevinData = [
+        const allDrevinData = [
             { cz: "Jinan dvoulaločný", lat: "Ginkgo biloba", img: "jinan-dvoulalocny.jpg" },
             { cz: "Borovice lesní", lat: "Pinus sylvestris", img: "borovice-lesni.jpg" },
             { cz: "Borovice kleč", lat: "Pinus mugo", img: "borovice-klec.jpg" },
@@ -75,19 +156,19 @@
             { cz: "Bříza pýřitá", lat: "Betula pubescens", img: "briza-pyrita.jpg" },
             { cz: "Olše lepkavá", lat: "Alnus glutinosa", img: "olse-lepkava.jpg" },
             { cz: "Olše šedá", lat: "Alnus incana", img: "olse-seda.jpg" },
-            { cz: "Olše zelená", lat: "Alnus alnobetula", img: "olse-zelena.jpg" },
+            { cz: "Olše zelená", lat: "Alnus viridis", img: "olse-zelena.jpg" },
             { cz: "Habr obecný", lat: "Carpinus betulus", img: "habr-obecny.jpg" },
             { cz: "Líska obecná", lat: "Corylus avellana", img: "liska-obecna.jpg" },
             { cz: "Líska turecká", lat: "Corylus colurna", img: "liska-turecka.jpeg" },
             { cz: "Topol osika", lat: "Populus tremula", img: "topol-osika.jpg" },
             { cz: "Topol černý", lat: "Populus nigra", img: "topol-cerny.jpg" },
             { cz: "Vrba pětimužná", lat: "Salix pentandra", img: "vrba-petimuzna.png" },
-            { cz: "Vrba křehká", lat: "Salix euxina", img: "vrba-krehka.jpg" },
+            { cz: "Vrba křehká", lat: "Salix fragilis", img: "vrba-krehka.jpg" },
             { cz: "Vrba bílá", lat: "Salix alba", img: "vrba-bila.jpg" },
             { cz: "Vrba trojmužná", lat: "Salix triandra", img: "vrba-trojmuzna.jpg" },
             { cz: "Vrba nachová", lat: "Salix purpurea", img: "vrba-nachova.jpg" },
             { cz: "Vrba šedá", lat: "Salix elaeagnos", img: "vrba-seda.jpg" },
-            { cz: "Vrba košíkářská", lat: "Salix viminilis", img: "vrba-kosikarska.jpg" },
+            { cz: "Vrba košíkářská", lat: "Salix viminalis", img: "vrba-kosikarska.jpg" },
             { cz: "Vrba jíva", lat: "Salix caprea", img: "vrba-jiva.jpg" },
             { cz: "Vrba ušatá", lat: "Salix aurita", img: "vrba-usata.jpg" },
             { cz: "Vrba popelavá", lat: "Salix cinerea", img: "vrba-popelava.jpg" },
@@ -95,10 +176,10 @@
             { cz: "Plamének plotní", lat: "Clematis vitalba", img: "plamenek-plotni.jpg" },
             { cz: "Ostružiník maliník", lat: "Rubus idaeus", img: "ostruzinik-malinik.jpg" },
             { cz: "Ostružiník sivý (ježiník)", lat: "Rubus caesius", img: "ostruzinik-sivy.jpg" },
-            { cz: "Ostružiník křovitý", lat: "Rubus fruticosus", img: "ostruzinik-krovity.jpg" },
-            { cz: "Růže šípková", lat: "Rosa canina", img: "ruze-sipkova.jpg" },
-            { cz: "Střemcha obecná", lat: "Prunus padus", img: "stremcha-obecna.jpg" },
-            { cz: "Třešeň ptačí", lat: "Prunus avium", img: "tresen-ptaci.jpg" },
+            { cz: "Ostružiník křovitý", lat: "Rubus fruticosus agg.", img: "ostruzinik-krovity.jpg" },
+            { cz: "Růže šípková", lat: "Rosa sect caninae", img: "ruze-sipkova.jpg" },
+            { cz: "Střemcha obecná", lat: "Padus avium", img: "stremcha-obecna.jpg" },
+            { cz: "Třešeň ptačí", lat: "Cerasus avium", img: "tresen-ptaci.jpg" },
             { cz: "Trnka obecná", lat: "Prunus spinosa", img: "trnka-obecna.jpg" },
             { cz: "Skalník obecný", lat: "Cotoneaster integerrimus", img: "skalnik-obecny.jpg" },
             { cz: "Hrušeň obecná", lat: "Pyrus communis", img: "hrusen-obecna.jpg" },
@@ -108,53 +189,117 @@
             { cz: "Jabloň lesní", lat: "Malus sylvestris", img: "jablon-lesni.jpg" },
             { cz: "Hloh obecný", lat: "Crataegus laevigata", img: "hloh-obecny.jpg" },
             { cz: "Hloh jednoblizný", lat: "Crataegus monogyna", img: "hloh-jednoblizny.jpg" },
-            { cz: "Janovec metlatý", lat: "Cytisus scoparius", img: "janovec-metlaty.jpg" },
+            { cz: "Janovec metlatý", lat: "Sarothamnus scoparius", img: "janovec-metlaty.jpg" },
             { cz: "Kručinka barvířská", lat: "Genista tinctoria", img: "krucinka-barvirska.jpg" },
             { cz: "Trnovník akát", lat: "Robinia pseudoacacia", img: "trnovnik-akat.jpg" },
             { cz: "Netvařec křovitý", lat: "Amorpha fruticosa", img: "netvarec-krovity.jpg" },
-            { cz: "Židoviník německý", lat: "Myricaria germanica", img: "zidovinik-nemecky.jpg" },
+            { cz: "Židoviník německý", lat: "Myricaria germanica", img: "zidovnik-nemecky.jpg" },
             { cz: "Vřes obecný", lat: "Calluna vulgaris", img: "vres-obecny.jpg" },
             { cz: "Rojovník bahenní", lat: "Ledum palustre", img: "rojovnik-bahenni.jpg" },
             { cz: "Brusinka obecná", lat: "Rhodococcus vitis-idaea", img: "brusinka-obecna.jpg" },
             { cz: "Borůvka černá", lat: "Vaccinium myrtillus", img: "boruvka-cerna.jpg" }
         ];
 
-        let lastIndex = -1;
-        const card = document.getElementById('mainCard');
-        const stat = document.getElementById('stat');
-        stat.innerText = `Dřevin: ${drevinData.length}`;
+        let quizData = [];
+        let currentIndex = 0;
+        let score = { correct: 0, wrong: 0 };
+        let answered = [];
+        let errorList = [];
+        let isRandomMode = false;
 
-        function handleCardClick() {
-            if (card.classList.contains('is-flipped')) {
-                // Pokud je karta otočená, při kliknutí skočí další
-                pickNext();
+        function setMode(mode) {
+            isRandomMode = (mode === 'random');
+            document.getElementById('mode-linear').classList.toggle('active', !isRandomMode);
+            document.getElementById('mode-random').classList.toggle('active', isRandomMode);
+        }
+
+        function startQuiz(amount) {
+            amount = parseInt(amount);
+            if (isNaN(amount) || amount <= 0) amount = allDrevinData.length;
+            if (amount > allDrevinData.length) amount = allDrevinData.length;
+
+            if (isRandomMode) {
+                quizData = [...allDrevinData].sort(() => 0.5 - Math.random()).slice(0, amount);
             } else {
-                // Pokud není otočená, otočí se pro zobrazení názvu
-                card.classList.add('is-flipped');
+                quizData = [...allDrevinData].slice(0, amount);
+            }
+            initQuiz();
+        }
+
+        function initQuiz() {
+            currentIndex = 0;
+            score = { correct: 0, wrong: 0 };
+            answered = new Array(quizData.length).fill(null);
+            errorList = [];
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'none';
+            updateUI(true);
+        }
+
+        function updateUI(immediate = false) {
+            const item = quizData[currentIndex];
+            const card = document.getElementById('mainCard');
+
+            if (immediate) {
+                card.classList.remove('is-flipped');
+                document.getElementById('plantImg').src = item.img;
+                document.getElementById('czName').textContent = item.cz;
+                document.getElementById('latName').textContent = item.lat;
+            } else {
+                // Pokud karta byla otočená, počkáme s výměnou textu, až nebude vidět
+                if (card.classList.contains('is-flipped')) {
+                    card.classList.remove('is-flipped');
+                    setTimeout(() => {
+                        document.getElementById('plantImg').src = item.img;
+                        document.getElementById('czName').textContent = item.cz;
+                        document.getElementById('latName').textContent = item.lat;
+                    }, 200); // Polovina času animace (0.4s)
+                } else {
+                    document.getElementById('plantImg').src = item.img;
+                    document.getElementById('czName').textContent = item.cz;
+                    document.getElementById('latName').textContent = item.lat;
+                }
+            }
+
+            document.getElementById('counter').textContent = `${currentIndex + 1} / ${quizData.length}`;
+            document.getElementById('correct-count').textContent = `${score.correct} ✓`;
+            document.getElementById('wrong-count').textContent = `✕ ${score.wrong}`;
+        }
+
+        function markAnswer(isCorrect) {
+            if (answered[currentIndex] === null) {
+                if (isCorrect) score.correct++; 
+                else {
+                    score.wrong++;
+                    if (!errorList.includes(quizData[currentIndex])) errorList.push(quizData[currentIndex]);
+                }
+                answered[currentIndex] = isCorrect;
+            }
+            
+            if (currentIndex < quizData.length - 1) {
+                currentIndex++;
+                updateUI();
+            } else {
+                setTimeout(showFinalResults, 500);
             }
         }
 
-        function pickNext() {
-            card.classList.remove('is-flipped');
-            
-            // Počkáme chvilku na animaci otočení zpět, než změníme obrázek
-            setTimeout(() => {
-                let randomIndex;
-                do {
-                    randomIndex = Math.floor(Math.random() * drevinData.length);
-                } while (randomIndex === lastIndex && drevinData.length > 1);
-                
-                lastIndex = randomIndex;
-                const selected = drevinData[randomIndex];
+        function nextCard() { if (currentIndex < quizData.length - 1) { currentIndex++; updateUI(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateUI(); } }
 
-                document.getElementById('plantImg').src = selected.img;
-                document.getElementById('czName').innerText = selected.cz;
-                document.getElementById('latName').innerText = selected.lat;
-            }, 150);
+        function showFinalResults() {
+            document.getElementById('res-correct').textContent = score.correct;
+            document.getElementById('res-wrong').textContent = score.wrong;
+            document.getElementById('res-pct').textContent = Math.round((score.correct/quizData.length)*100) + "%";
+            document.getElementById('btn-errors').style.display = errorList.length > 0 ? 'inline-block' : 'none';
+            document.getElementById('results-screen').style.display = 'flex';
         }
 
-        // Spustit první kartu
-        window.onload = pickNext;
+        function retryErrors() {
+            quizData = [...errorList];
+            if (isRandomMode) quizData.sort(() => 0.5 - Math.random());
+            initQuiz();
+        }
     </script>
 </body>
 </html>
