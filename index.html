@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 Poznávačka Dřevin - Expert</title>
+    <title>🌿 Poznávačka Dřevin - Audio Expert 80</title>
     <style>
         :root {
             --green: #2ecc71;
@@ -18,11 +18,10 @@
         #menu-screen { position: fixed; inset: 0; background: #f4f7f6; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; overflow-y: auto; }
         .menu-title { color: var(--dark-green); margin-bottom: 5px; font-size: 2rem; }
         
-        .menu-section { margin-bottom: 15px; width: 100%; max-width: 340px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .menu-section p { font-weight: bold; margin-bottom: 10px; color: #555; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-section { margin-bottom: 15px; width: 100%; max-width: 360px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .menu-section p { font-weight: bold; margin-bottom: 10px; color: #555; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
         
         .global-settings { background: #eef2f3; border: 2px solid var(--blue); }
-
         .mode-toggle { display: flex; gap: 5px; background: #ddd; padding: 5px; border-radius: 12px; margin-bottom: 5px; }
         .btn-mode { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: transparent; transition: 0.3s; }
         .btn-mode.active { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: var(--blue); }
@@ -33,10 +32,10 @@
         .full-width { grid-column: span 2; }
         
         .checkbox-group { text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; padding: 5px; background: #fafafa; border-radius: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 6px; background: #fafafa; border-radius: 8px; }
         .checkbox-item input { transform: scale(1.2); }
 
-        input[type="number"] { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid #ccc; text-align: center; font-size: 1.1rem; box-sizing: border-box; margin-top: 5px; }
+        input[type="number"] { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid #ccc; text-align: center; font-size: 1.1rem; box-sizing: border-box; }
 
         .header-stats { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: bold; }
         .stat-box { padding: 6px 12px; border-radius: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.9rem; min-width: 50px; text-align: center; }
@@ -57,12 +56,13 @@
         .drill-text { font-size: 1.8rem; font-weight: bold; color: var(--dark-green); text-align: center; }
         .card-back { transform: rotateY(180deg); background-color: #e8f5e9; text-align: center; }
         .cz-name { font-size: 1.6rem; font-weight: bold; color: #1b3d17; margin-bottom: 10px; }
-        .lat-name { font-size: 1.2rem; font-style: italic; color: #555; border-top: 1px solid #ccc; padding-top: 10px; width: 85%; }
+        .lat-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; border-top: 1px solid #ccc; padding-top: 10px; width: 85%; }
+        .lat-name { font-size: 1.2rem; font-style: italic; color: #555; }
+        .btn-speak { background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: 0.2s; padding: 5px; }
 
         .controls { display: flex; align-items: center; gap: 15px; }
         .btn-circle { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--blue); background: white; color: var(--blue); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-pill { padding: 10px 25px; border-radius: 30px; background: white; font-size: 20px; cursor: pointer; border: 2px solid #ddd; min-width: 70px; }
-        
         .btn-wrong.active { background: var(--red); color: white; border-color: var(--red); }
         .btn-correct.active { background: var(--green); color: white; border-color: var(--green); }
         
@@ -92,7 +92,7 @@
         </div>
 
         <div class="menu-section">
-            <p>3. Poznávačka z obrázků:</p>
+            <p>3. Výběr sekcí (Obrázky):</p>
             <div class="checkbox-group">
                 <label class="checkbox-item"><input type="checkbox" class="cat-check" value="jehličnany" checked onchange="updateCatCount()"> Jehličnany</label>
                 <label class="checkbox-item"><input type="checkbox" class="cat-check" value="listnáče" checked onchange="updateCatCount()"> Listnáče</label>
@@ -101,15 +101,15 @@
                 <label class="checkbox-item"><input type="checkbox" class="cat-check" value="vrby" checked onchange="updateCatCount()"> Vrby/Jilmy</label>
             </div>
             <button id="btn-start-custom" class="btn-menu full-width" style="background: var(--dark-green); color: white;" onclick="startCustom()">
-                Spustit výběr (Počet: 70)
+                Spustit výběr (Počet: 80)
             </button>
         </div>
 
         <div class="menu-section">
             <p>Vlastní počet (max. 100):</p>
-            <input type="number" id="customAmount" value="70">
+            <input type="number" id="customAmount" value="80">
             <button class="btn-menu full-width" style="margin-top:10px;" onclick="startFlow('img', document.getElementById('customAmount').value)">Spustit vlastní počet</button>
-            <button class="btn-menu full-width" style="margin-top:10px; background: #34495e; color: white; border: none;" onclick="startFlow('img', 70)">Spustit vše (70)</button>
+            <button class="btn-menu full-width" style="margin-top:10px; background: #34495e; color: white; border: none;" onclick="startFlow('img', 80)">Spustit vše (80)</button>
         </div>
     </div>
 
@@ -121,7 +121,7 @@
     </div>
 
     <div class="card-container">
-        <div class="card" id="mainCard" onclick="this.classList.toggle('is-flipped')">
+        <div class="card" id="mainCard" onclick="handleCardClick(event, this)">
             <div class="card-face card-front">
                 <div class="img-container">
                     <img id="plantImg" src="">
@@ -130,7 +130,10 @@
             </div>
             <div class="card-face card-back">
                 <div class="cz-name" id="czName">---</div>
-                <div class="lat-name" id="latName">---</div>
+                <div class="lat-wrapper">
+                    <div class="lat-name" id="latName">---</div>
+                    <button class="btn-speak" onclick="speakLatin(event)">🔊</button>
+                </div>
             </div>
         </div>
     </div>
@@ -154,6 +157,7 @@
 
     <script>
         const allDrevinData = [
+            // JEHLIČNANY (12)
             { cz: "Jinan dvoulaločný", lat: "Ginkgo biloba", img: "jinan-dvoulalocny.jpg", cat: "jehličnany" },
             { cz: "Borovice lesní", lat: "Pinus sylvestris", img: "borovice-lesni.jpg", cat: "jehličnany" },
             { cz: "Borovice kleč", lat: "Pinus mugo", img: "borovice-klec.jpg", cat: "jehličnany" },
@@ -166,6 +170,7 @@
             { cz: "Douglaska tisolistá", lat: "Pseudotsuga menziesii", img: "douglaska-tisolista.jpg", cat: "jehličnany" },
             { cz: "Tis červený", lat: "Taxus baccata", img: "tis-cerveny.jpg", cat: "jehličnany" },
             { cz: "Jalovec obecný", lat: "Juniperus communis", img: "jalovec-obecny.jpg", cat: "jehličnany" },
+            // LISTNÁČE (16 včetně Lip)
             { cz: "Platan západní", lat: "Platanus occidentalis", img: "platan-zapadni.jpg", cat: "listnáče" },
             { cz: "Buk lesní", lat: "Fagus sylvatica", img: "buk-lesni.jpg", cat: "listnáče" },
             { cz: "Dub cer", lat: "Quercus cerris", img: "dub-cer.png", cat: "listnáče" },
@@ -182,10 +187,13 @@
             { cz: "Topol osika", lat: "Populus tremula", img: "topol-osika.jpg", cat: "listnáče" },
             { cz: "Topol černý", lat: "Populus nigra", img: "topol-cerny.jpg", cat: "listnáče" },
             { cz: "Trnovník akát", lat: "Robinia pseudoacacia", img: "trnovnik-akat.jpg", cat: "listnáče" },
+            { cz: "Lípa srdčitá", lat: "Tilia cordata", img: "lipa-srdcita.jpg", cat: "listnáče" },
+            { cz: "Lípa velkolistá", lat: "Tilia platyphyllos", img: "lipa-velkolista.jpg", cat: "listnáče" },
+            // VRBY A JILMY (14)
             { cz: "Vrba pětimužná", lat: "Salix pentandra", img: "vrba-petimuzna.png", cat: "vrby" },
             { cz: "Vrba křehká", lat: "Salix fragilis", img: "vrba-krehka.jpg", cat: "vrby" },
             { cz: "Vrba bílá", lat: "Salix alba", img: "vrba-bila.jpg", cat: "vrby" },
-            { cz: "Vrba trojmužná", lat: "Salix triandra", img: "vrba-trojmuzna.jpg" , cat: "vrby"},
+            { cz: "Vrba trojmužná", lat: "Salix triandra", img: "vrba-trojmuzna.jpg", cat: "vrby" },
             { cz: "Vrba nachová", lat: "Salix purpurea", img: "vrba-nachova.jpg", cat: "vrby" },
             { cz: "Vrba šedá", lat: "Salix elaeagnos", img: "vrba-seda.jpg", cat: "vrby" },
             { cz: "Vrba košíkářská", lat: "Salix viminalis", img: "vrba-kosikarska.jpg", cat: "vrby" },
@@ -196,6 +204,7 @@
             { cz: "Jilm habrolistý", lat: "Ulmus minor", img: "jilm-habrolisty.jpg", cat: "vrby" },
             { cz: "Jilm horský", lat: "Ulmus glabra", img: "jilm-horsky.jpg", cat: "vrby" },
             { cz: "Jilm vaz", lat: "Ulmus laevis", img: "jilm-vaz.jpg", cat: "vrby" },
+            // OVOCE (8)
             { cz: "Střemcha obecná", lat: "Padus avium", img: "stremcha-obecna.jpg", cat: "ovoce" },
             { cz: "Třešeň ptačí", lat: "Cerasus avium", img: "tresen-ptaci.jpg", cat: "ovoce" },
             { cz: "Trnka obecná", lat: "Prunus spinosa", img: "trnka-obecna.jpg", cat: "ovoce" },
@@ -204,6 +213,7 @@
             { cz: "Břek obecný", lat: "Sorbus torminalis", img: "brek-obecny.jpg", cat: "ovoce" },
             { cz: "Muk obecný", lat: "Sorbus aria", img: "muk-obecny.jpg", cat: "ovoce" },
             { cz: "Jabloň lesní", lat: "Malus sylvestris", img: "jablon-lesni.jpg", cat: "ovoce" },
+            // KEŘE (30 včetně nových)
             { cz: "Dřišťál obecný", lat: "Berberis vulgaris", img: "dristal-obecny.jpg", cat: "keře" },
             { cz: "Chmel otáčivý", lat: "Humulus lupulus", img: "chmel-otacivy.jpg", cat: "keře" },
             { cz: "Líska obecná", lat: "Corylus avellana", img: "liska-obecna.jpg", cat: "keře" },
@@ -223,7 +233,15 @@
             { cz: "Vřes obecný", lat: "Calluna vulgaris", img: "vres-obecny.jpg", cat: "keře" },
             { cz: "Rojovník bahenní", lat: "Ledum palustre", img: "rojovnik-bahenni.jpg", cat: "keře" },
             { cz: "Brusinka obecná", lat: "Rhodococcus vitis-idaea", img: "brusinka-obecna.jpg", cat: "keře" },
-            { cz: "Borůvka černá", lat: "Vaccinium myrtillus", img: "boruvka-cerna.jpg", cat: "keře" }
+            { cz: "Borůvka černá", lat: "Vaccinium myrtillus", img: "boruvka-cerna.jpg", cat: "keře" },
+            { cz: "Brslen evropský", lat: "Euonymus europaeus", img: "brslen-evropsky.jpg", cat: "keře" },
+            { cz: "Brslen bradavičnatý", lat: "Euonymus verrucosus", img: "brslen-bradavicnaty.jpg", cat: "keře" },
+            { cz: "Hlošina úzkolistá", lat: "Elaeagnus angustifolia", img: "hlosina-uzkolista.jpg", cat: "keře" },
+            { cz: "Rakytník řešetlákový", lat: "Hippophaë rhamnoides", img: "rakytnik-resetlakovy.jpg", cat: "keře" },
+            { cz: "Lýkovec jedovatý", lat: "Daphne mezereum", img: "lykovec-jedovaty.jpg", cat: "keře" },
+            { cz: "Lýkovec vonný", lat: "Daphne cneorum", img: "lykovec-vonny.jpg", cat: "keře" },
+            { cz: "Krušina olšová", lat: "Frangula alnus", img: "krusina-olsova.jpg", cat: "keře" },
+            { cz: "Řešetlák počistivý", lat: "Rhamnus catharticus", img: "resetlak-pocistivy.jpg", cat: "keře" }
         ];
 
         let quizData = [], currentIndex = 0, answered = [], isRandom = false, mode = 'img';
@@ -240,10 +258,23 @@
             document.getElementById('btn-start-custom').textContent = `Spustit výběr (Počet: ${count})`;
         }
 
+        function handleCardClick(event, card) {
+            if (!event.target.closest('.btn-speak')) card.classList.toggle('is-flipped');
+        }
+
+        function speakLatin(event) {
+            event.stopPropagation();
+            const text = quizData[currentIndex].lat;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'la';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
         function startCustom() {
             const selectedCats = Array.from(document.querySelectorAll('.cat-check:checked')).map(cb => cb.value);
             const filtered = allDrevinData.filter(d => selectedCats.includes(d.cat));
-            if (filtered.length === 0) return alert("Musíš vybrat aspoň jednu kategorii!");
+            if (filtered.length === 0) return alert("Vyber aspoň jednu sekci!");
             mode = 'img';
             quizData = isRandom ? filtered.sort(() => 0.5 - Math.random()) : filtered;
             initQuiz();
@@ -252,10 +283,9 @@
         function startFlow(m, amount) {
             mode = m;
             amount = parseInt(amount) || allDrevinData.length;
-            const limit = Math.min(allDrevinData.length, 100);
-            if (amount > limit) amount = limit;
+            if (amount > 100) amount = 100;
             quizData = isRandom ? [...allDrevinData].sort(() => 0.5 - Math.random()) : [...allDrevinData];
-            quizData = quizData.slice(0, amount);
+            quizData = quizData.slice(0, Math.min(amount, quizData.length));
             initQuiz();
         }
 
@@ -293,7 +323,7 @@
         function checkFinished() {
             const firstEmpty = answered.indexOf(null);
             if (firstEmpty === -1) showResults();
-            else { alert("Musíš označit všechny položky!"); currentIndex = firstEmpty; updateUI(); }
+            else { alert("Všechny položky musí být označené!"); currentIndex = firstEmpty; updateUI(); }
         }
         function goHome() { if (confirm("Vrátit se do menu?")) location.reload(); }
         function showResults() {
@@ -305,7 +335,6 @@
             document.getElementById('results-screen').style.display = 'flex';
         }
         function retryErrors() { quizData = quizData.filter((_, i) => answered[i] === false); initQuiz(); }
-
         window.onload = updateCatCount;
     </script>
 </body>
