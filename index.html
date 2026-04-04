@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 Poznávačka Dřevin - Smart Expert 100</title>
+    <title>🌿 Poznávačka Dřevin - Expert 100</title>
     <style>
         :root { --green: #2ecc71; --red: #e74c3c; --blue: #3498db; --dark-green: #2d5a27; }
         body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f4f7f6; margin: 0; padding: 10px; min-height: 100vh; user-select: none; }
         
-        /* OPRAVA VRSTEV - aby šlo na vše kliknout */
-        #menu-screen { position: fixed; inset: 0; background: #f4f7f6; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; overflow-y: auto; }
-        #results-screen { display: none; position: fixed; inset: 0; background: white; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; text-align: center; padding: 20px; }
+        /* OPRAVA: Results screen je nyní defaultně úplně odstraněn z toku, aby neblokoval klikání */
+        #menu-screen { position: fixed; inset: 0; background: #f4f7f6; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; overflow-y: auto; }
+        #results-screen { display: none; position: fixed; inset: 0; background: white; flex-direction: column; align-items: center; justify-content: center; z-index: 200; text-align: center; padding: 20px; }
         
         .menu-title { color: var(--dark-green); margin-bottom: 5px; font-size: 2rem; }
         .menu-section { margin-bottom: 15px; width: 100%; max-width: 360px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
@@ -33,7 +33,6 @@
         .stat-box { padding: 6px 12px; border-radius: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 0.9rem; min-width: 50px; text-align: center; border: 2px solid #eee; }
         .btn-home { background: white; border: 2px solid #ccc; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
         
-        /* KARTA */
         .card-container { width: 320px; height: 420px; perspective: 1000px; margin-bottom: 20px; }
         .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; }
         .card.is-flipped { transform: rotateY(180deg); }
@@ -70,7 +69,7 @@
         </div>
 
         <div class="menu-section">
-            <p>2. Výběr sekcí (Poznávačka):</p>
+            <p>2. Výběr sekcí:</p>
             <div class="checkbox-group">
                 <label class="checkbox-item"><input type="checkbox" class="cat-check" value="jehličnany" checked onchange="updateCatCount()"> Jehličnany</label>
                 <label class="checkbox-item"><input type="checkbox" class="cat-check" value="listnáče" checked onchange="updateCatCount()"> Listnáče</label>
@@ -99,9 +98,7 @@
     <div class="card-container">
         <div class="card" id="mainCard" onclick="handleCardClick(event, this)">
             <div class="card-face card-front">
-                <div class="img-container">
-                    <img id="plantImg" src="" alt="Dřevina">
-                </div>
+                <div class="img-container"><img id="plantImg" src="" alt="Dřevina"></div>
             </div>
             <div class="card-face card-back">
                 <div class="cz-name" id="czName">---</div>
@@ -162,7 +159,7 @@
             { cz: "Lípa srdčitá", lat: "Tilia cordata", img: "lipa-srdcita.jpg", cat: "listnáče" },
             { cz: "Lípa velkolistá", lat: "Tilia platyphyllos", img: "lipa-velkolista.jpg", cat: "listnáče" },
             { cz: "Javor babyka", lat: "Acer campestre", img: "javor-babyka.jpg", cat: "listnáče" },
-            { cz: "Javor mléč", lat: "Acer platanoides", img: "javor-mlec.png", cat: "listnáče" },
+            { cz: "Javor mléč", lat: "Acer platanoides", img: "javor-mlec.jpg", cat: "listnáče" },
             { cz: "Javor klen", lat: "Acer pseudoplatanus", img: "javor-klen.jpg", cat: "listnáče" },
             { cz: "Jírovec maďal", lat: "Aesculus hippocastanum", img: "jirovec-madal.jpg", cat: "listnáče" },
             { cz: "Jasan ztepilý", lat: "Fraxinus excelsior", img: "jasan-ztepily.jpg", cat: "listnáče" },
@@ -253,7 +250,7 @@
         function startCustom() {
             const selectedCats = Array.from(document.querySelectorAll('.cat-check:checked')).map(cb => cb.value);
             const filtered = allDrevinData.filter(d => selectedCats.includes(d.cat));
-            if (filtered.length === 0) return alert("Vyber kategorii!");
+            if (filtered.length === 0) return alert("Vyber aspoň jednu kategorii!");
             quizData = isRandom ? filtered.sort(() => 0.5 - Math.random()) : filtered;
             initQuiz();
         }
