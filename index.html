@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 Poznávačka Dřevin - Smart Expert 90</title>
+    <title>🌿 Poznávačka Dřevin - Smart Expert 100</title>
     <style>
         :root { --green: #2ecc71; --red: #e74c3c; --blue: #3498db; --dark-green: #2d5a27; }
         body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f4f7f6; margin: 0; padding: 10px; min-height: 100vh; user-select: none; }
         
-        #menu-screen { position: fixed; inset: 0; background: #f4f7f6; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; overflow-y: auto; }
-        #results-screen { display: none; position: fixed; inset: 0; background: white; flex-direction: column; align-items: center; justify-content: center; z-index: 1100; text-align: center; padding: 20px; }
+        /* OPRAVA VRSTEV - aby šlo na vše kliknout */
+        #menu-screen { position: fixed; inset: 0; background: #f4f7f6; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; overflow-y: auto; }
+        #results-screen { display: none; position: fixed; inset: 0; background: white; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; text-align: center; padding: 20px; }
         
         .menu-title { color: var(--dark-green); margin-bottom: 5px; font-size: 2rem; }
         .menu-section { margin-bottom: 15px; width: 100%; max-width: 360px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
@@ -38,11 +39,9 @@
         .card.is-flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; border: 4px solid var(--dark-green); box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 15px; box-sizing: border-box; }
         
-        /* PŘEDNÍ STRANA - OBRÁZEK */
         .card-front .img-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         .card-front img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* ZADNÍ STRANA - TEXT */
         .card-back { transform: rotateY(180deg); }
         .card-back .cz-name { font-size: 1.8rem; font-weight: bold; color: #1b3d17; margin-bottom: 10px; text-align: center; }
         .card-back .lat-wrapper { border-top: 1px solid #ccc; margin-top: 15px; width: 90%; display: flex; align-items: center; justify-content: center; gap: 10px; padding-top: 15px; }
@@ -84,7 +83,7 @@
 
         <div class="menu-section">
             <p>3. Vlastní počet (max. 100):</p>
-            <input type="number" id="customAmount" value="100">
+            <input type="number" id="customAmount" value="100" oninput="if(this.value > 100) this.value = 100; if(this.value < 1) this.value = 1;">
             <button class="btn-menu" style="border-color: var(--blue); color: var(--blue);" onclick="startFlow(document.getElementById('customAmount').value)">Spustit vlastní počet</button>
             <button class="btn-menu" style="background: #34495e; color: white; border: none;" onclick="startFlow(100)">Spustit vše (100)</button>
         </div>
@@ -130,6 +129,7 @@
 
     <script>
         const allDrevinData = [
+            // JEHLIČNANY
             { cz: "Jinan dvoulaločný", lat: "Ginkgo biloba", img: "jinan-dvoulalocny.jpg", cat: "jehličnany" },
             { cz: "Borovice lesní", lat: "Pinus sylvestris", img: "borovice-lesni.jpg", cat: "jehličnany" },
             { cz: "Borovice kleč", lat: "Pinus mugo", img: "borovice-klec.jpg", cat: "jehličnany" },
@@ -142,6 +142,7 @@
             { cz: "Douglaska tisolistá", lat: "Pseudotsuga menziesii", img: "douglaska-tisolista.jpg", cat: "jehličnany" },
             { cz: "Tis červený", lat: "Taxus baccata", img: "tis-cerveny.jpg", cat: "jehličnany" },
             { cz: "Jalovec obecný", lat: "Juniperus communis", img: "jalovec-obecny.jpg", cat: "jehličnany" },
+            // LISTNÁČE
             { cz: "Platan západní", lat: "Platanus occidentalis", img: "platan-zapadni.jpg", cat: "listnáče" },
             { cz: "Buk lesní", lat: "Fagus sylvatica", img: "buk-lesni.jpg", cat: "listnáče" },
             { cz: "Dub cer", lat: "Quercus cerris", img: "dub-cer.png", cat: "listnáče" },
@@ -164,6 +165,8 @@
             { cz: "Javor mléč", lat: "Acer platanoides", img: "javor-mlec.png", cat: "listnáče" },
             { cz: "Javor klen", lat: "Acer pseudoplatanus", img: "javor-klen.jpg", cat: "listnáče" },
             { cz: "Jírovec maďal", lat: "Aesculus hippocastanum", img: "jirovec-madal.jpg", cat: "listnáče" },
+            { cz: "Jasan ztepilý", lat: "Fraxinus excelsior", img: "jasan-ztepily.jpg", cat: "listnáče" },
+            // VRBY/JILMY
             { cz: "Vrba pětimužná", lat: "Salix pentandra", img: "vrba-petimuzna.png", cat: "vrby" },
             { cz: "Vrba křehká", lat: "Salix fragilis", img: "vrba-krehka.jpg", cat: "vrby" },
             { cz: "Vrba bílá", lat: "Salix alba", img: "vrba-bila.jpg", cat: "vrby" },
@@ -178,6 +181,7 @@
             { cz: "Jilm habrolistý", lat: "Ulmus minor", img: "jilm-habrolisty.jpg", cat: "vrby" },
             { cz: "Jilm horský", lat: "Ulmus glabra", img: "jilm-horsky.jpg", cat: "vrby" },
             { cz: "Jilm vaz", lat: "Ulmus laevis", img: "jilm-vaz.jpg", cat: "vrby" },
+            // OVOCE
             { cz: "Střemcha obecná", lat: "Padus avium", img: "stremcha-obecna.jpg", cat: "ovoce" },
             { cz: "Třešeň ptačí", lat: "Cerasus avium", img: "tresen-ptaci.jpg", cat: "ovoce" },
             { cz: "Trnka obecná", lat: "Prunus spinosa", img: "trnka-obecna.jpg", cat: "ovoce" },
@@ -186,6 +190,7 @@
             { cz: "Břek obecný", lat: "Sorbus torminalis", img: "brek-obecny.jpg", cat: "ovoce" },
             { cz: "Muk obecný", lat: "Sorbus aria", img: "muk-obecny.jpg", cat: "ovoce" },
             { cz: "Jabloň lesní", lat: "Malus sylvestris", img: "jablon-lesni.jpg", cat: "ovoce" },
+            // KEŘE
             { cz: "Dřišťál obecný", lat: "Berberis vulgaris", img: "dristal-obecny.jpg", cat: "keře" },
             { cz: "Chmel otáčivý", lat: "Humulus lupulus", img: "chmel-otacivy.jpg", cat: "keře" },
             { cz: "Líska obecná", lat: "Corylus avellana", img: "liska-obecna.jpg", cat: "keře" },
@@ -215,16 +220,15 @@
             { cz: "Krušina olšová", lat: "Frangula alnus", img: "krusina-olsova.jpg", cat: "keře" },
             { cz: "Řešetlák počistivý", lat: "Rhamnus catharticus", img: "resetlak-pocistivy.jpg", cat: "keře" },
             { cz: "Dřín obecný", lat: "Cornus mas", img: "drin-obecny.jpg", cat: "keře" },
-            { cz: "Svída krvavá", lat: "Swida sanguinea", img: "svida-krvava.jpeg", cat: "keře" },
+            { cz: "Svída krvavá", lat: "Swida sanguinea", img: "svida-krvava.jpg", cat: "keře" },
             { cz: "Břečťan popínavý", lat: "Hedera helix", img: "brectan-popinavy.jpg", cat: "keře" },
             { cz: "Bez chebzí", lat: "Sambucus ebulus", img: "bez-chebzi.jpg", cat: "keře" },
             { cz: "Bez černý", lat: "Sambucus nigra", img: "bez-cerny.jpg", cat: "keře" },
-            { cz: "Bez hroznatý", lat: "Sambucus racemosa", img: "bez-hroznaty.jpg", cat: "keře" }
+            { cz: "Bez hroznatý", lat: "Sambucus racemosa", img: "bez-hroznaty.jpg", cat: "keře" },
             { cz: "Kalina planá", lat: "Viburnum opulus", img: "kalina-plana.jpg", cat: "keře" },
             { cz: "Pámelník bílý", lat: "Symphoricarpos rivularis", img: "pamelnik-bily.jpg", cat: "keře" },
             { cz: "Zimolez obecný", lat: "Lonicera xylosteum", img: "zimolez-obecny.jpg", cat: "keře" },
             { cz: "Zimolez černý", lat: "Lonicera nigra", img: "zimolez-cerny.jpg", cat: "keře" },
-            { cz: "Jasan ztepilý", lat: "Fraxinus excelsior", img: "jasan-ztepily.jpg", cat: "listnáče" },
             { cz: "Ptačí zob obecný", lat: "Ligustrum vulgare", img: "ptaci-zob-obecny.jpg", cat: "keře" },
             { cz: "Barvínek menší", lat: "Vinca minor", img: "barvinek-mensi.jpg", cat: "keře" },
             { cz: "Kustovnice cizí", lat: "Lycium barbatum", img: "kustovnice-cizi.jpg", cat: "keře" },
@@ -271,7 +275,6 @@
 
         function updateUI() {
             const item = quizData[currentIndex];
-            // VŽDY resetujeme kartu na líc (obrázek)
             document.getElementById('mainCard').classList.remove('is-flipped');
             document.getElementById('plantImg').src = item.img;
             document.getElementById('czName').textContent = item.cz;
@@ -291,11 +294,8 @@
         }
 
         function nextCard() { 
-            if (currentIndex < quizData.length - 1) { 
-                currentIndex++; updateUI(); 
-            } else {
-                checkAutoProgress();
-            }
+            if (currentIndex < quizData.length - 1) { currentIndex++; updateUI(); } 
+            else { checkAutoProgress(); }
         }
         function prevCard() { if (currentIndex > 0) { currentIndex--; updateUI(); } }
 
@@ -304,11 +304,9 @@
             if (firstEmpty === -1) {
                 showResults();
             } else if (currentIndex >= quizData.length - 1 || answered[currentIndex] !== null) {
-                currentIndex = firstEmpty;
-                updateUI();
+                currentIndex = firstEmpty; updateUI();
             } else {
-                currentIndex++;
-                updateUI();
+                currentIndex++; updateUI();
             }
         }
 
@@ -320,12 +318,10 @@
         }
 
         function handleCardClick(event, card) {
-            if (!event.target.closest('.btn-speak')) {
-                card.classList.toggle('is-flipped');
-            }
+            if (!event.target.closest('.btn-speak')) { card.classList.toggle('is-flipped'); }
         }
 
-        function goHome() { if (confirm("Do menu?")) location.reload(); }
+        function goHome() { if (confirm("Opravdu do menu?")) location.reload(); }
         
         function showResults() {
             let correct = answered.filter(a => a === true).length;
